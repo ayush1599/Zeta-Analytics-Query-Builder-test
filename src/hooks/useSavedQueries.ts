@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
 export interface SavedQuery {
@@ -23,6 +22,8 @@ export interface SavedQuery {
   };
 }
 
+const STORAGE_KEY = 'saved_queries';
+
 export const useSavedQueries = () => {
   const { user } = useAuth();
   const [savedQueries, setSavedQueries] = useState<SavedQuery[]>([]);
@@ -35,7 +36,7 @@ export const useSavedQueries = () => {
     tags: "",
   });
 
-  // Load saved queries from Supabase on mount and when user changes
+  // Load saved queries from localStorage
   useEffect(() => {
     if (!user) {
       setSavedQueries([]);
@@ -43,42 +44,26 @@ export const useSavedQueries = () => {
       return;
     }
 
-    const loadQueries = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('saved_queries')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
-
-        // Convert database format to app format
-        const queriesWithDates = data.map((query: any) => ({
-          id: query.id,
-          query: query.query,
-          queryTypes: query.query_types,
-          campaignId: query.campaign_id,
-          lineItemId: query.line_item_id,
-          tacticId: query.tactic_id,
-          timestamp: new Date(query.timestamp),
-          tags: query.tags || [],
-          metadata: query.metadata,
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Convert string dates back to Date objects
+        const queriesWithDates = parsed.map((q: any) => ({
+          ...q,
+          timestamp: new Date(q.timestamp)
         }));
-
         setSavedQueries(queriesWithDates);
         setFilteredQueries(queriesWithDates);
-      } catch (error) {
-        console.error("Error loading saved queries:", error);
-        toast({
-          title: "Error loading queries",
-          description: "Failed to load your saved queries.",
-          variant: "destructive",
-        });
       }
-    };
-
-    loadQueries();
+    } catch (error) {
+      console.error("Error loading saved queries:", error);
+      toast({
+        title: "Error loading queries",
+        description: "Failed to load your local saved queries.",
+        variant: "destructive",
+      });
+    }
   }, [user]);
 
   // Filter queries based on current filters
@@ -86,34 +71,34 @@ export const useSavedQueries = () => {
     let filtered = savedQueries;
 
     if (filters.campaignId) {
-      filtered = filtered.filter(query => 
+      filtered = filtered.filter(query =>
         query.campaignId?.toLowerCase().includes(filters.campaignId.toLowerCase())
       );
     }
 
     if (filters.lineItemId) {
-      filtered = filtered.filter(query => 
+      filtered = filtered.filter(query =>
         query.lineItemId?.toLowerCase().includes(filters.lineItemId.toLowerCase())
       );
     }
 
     if (filters.tacticId) {
-      filtered = filtered.filter(query => 
+      filtered = filtered.filter(query =>
         query.tacticId?.toLowerCase().includes(filters.tacticId.toLowerCase())
       );
     }
 
     if (filters.queryType) {
-      filtered = filtered.filter(query => 
-        query.queryTypes.some(type => 
+      filtered = filtered.filter(query =>
+        query.queryTypes.some(type =>
           type.toLowerCase().includes(filters.queryType.toLowerCase())
         )
       );
     }
 
     if (filters.tags) {
-      filtered = filtered.filter(query => 
-        query.tags?.some(tag => 
+      filtered = filtered.filter(query =>
+        query.tags?.some(tag =>
           tag.toLowerCase().includes(filters.tags.toLowerCase())
         )
       );
@@ -139,50 +124,31 @@ export const useSavedQueries = () => {
     }
 
     try {
-      const newQuery = {
-        user_id: user.id,
+      const newQuery: SavedQuery = {
+        id: crypto.randomUUID(),
         query: queryData.query,
-        query_types: queryData.queryTypes,
-        campaign_id: queryData.idField.type === 'campaign_id' ? queryData.idField.value : null,
-        line_item_id: queryData.idField.type === 'line_item_id' ? queryData.idField.value : null,
-        tactic_id: queryData.idField.type === 'tactic_id' ? queryData.idField.value : null,
-        timestamp: new Date().toISOString(),
+        queryTypes: queryData.queryTypes,
+        campaignId: queryData.idField.type === 'campaign_id' ? queryData.idField.value : undefined,
+        lineItemId: queryData.idField.type === 'line_item_id' ? queryData.idField.value : undefined,
+        tacticId: queryData.idField.type === 'tactic_id' ? queryData.idField.value : undefined,
+        timestamp: new Date(),
         tags: queryData.tags || [],
         metadata: queryData.metadata,
       };
 
-      const { data, error } = await supabase
-        .from('saved_queries')
-        .insert([newQuery])
-        .select()
-        .single();
+      const updatedQueries = [newQuery, ...savedQueries];
+      setSavedQueries(updatedQueries);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedQueries));
 
-      if (error) throw error;
-
-      // Add to local state
-      const savedQuery: SavedQuery = {
-        id: data.id,
-        query: data.query,
-        queryTypes: data.query_types,
-        campaignId: data.campaign_id,
-        lineItemId: data.line_item_id,
-        tacticId: data.tactic_id,
-        timestamp: new Date(data.timestamp),
-        tags: data.tags || [],
-        metadata: data.metadata,
-      };
-
-      setSavedQueries(prev => [savedQuery, ...prev]);
-      
       toast({
         title: "Query Saved!",
-        description: "Your query has been saved to your history.",
+        description: "Your query has been saved to local history.",
       });
     } catch (error) {
       console.error("Error saving query:", error);
       toast({
         title: "Error saving query",
-        description: "Failed to save your query. Please try again.",
+        description: "Failed to save your query locally.",
         variant: "destructive",
       });
     }
@@ -190,15 +156,10 @@ export const useSavedQueries = () => {
 
   const deleteQuery = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('saved_queries')
-        .delete()
-        .eq('id', id);
+      const updatedQueries = savedQueries.filter(query => query.id !== id);
+      setSavedQueries(updatedQueries);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedQueries));
 
-      if (error) throw error;
-
-      setSavedQueries(prev => prev.filter(query => query.id !== id));
-      
       toast({
         title: "Query Deleted",
         description: "The query has been removed from your history.",
@@ -207,7 +168,7 @@ export const useSavedQueries = () => {
       console.error("Error deleting query:", error);
       toast({
         title: "Error deleting query",
-        description: "Failed to delete the query. Please try again.",
+        description: "Failed to delete the query.",
         variant: "destructive",
       });
     }
@@ -236,4 +197,4 @@ export const useSavedQueries = () => {
     updateFilters,
     clearFilters,
   };
-}; 
+};

@@ -1,7 +1,19 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { User, Session } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
 import { toast } from '@/hooks/use-toast'
+
+// Mock User interface since we removed Supabase
+export interface User {
+  id: string
+  email: string
+  created_at: string
+  updated_at: string
+}
+
+// Mock Session interface
+export interface Session {
+  user: User
+  access_token: string
+}
 
 interface AuthContextType {
   user: User | null
@@ -34,61 +46,55 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-
-    return () => subscription.unsubscribe()
+    // Check localStorage for session
+    const storedSession = localStorage.getItem('auth_session')
+    if (storedSession) {
+      try {
+        const parsedSession = JSON.parse(storedSession)
+        setSession(parsedSession)
+        setUser(parsedSession.user)
+      } catch (e) {
+        console.error("Failed to parse session", e)
+        localStorage.removeItem('auth_session')
+      }
+    }
+    setLoading(false)
   }, [])
 
   const signUp = async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      })
-      
-      if (error) throw error
-      
-      toast({
-        title: "Account created!",
-        description: "Please check your email to verify your account.",
-      })
-    } catch (error: any) {
-      toast({
-        title: "Error creating account",
-        description: error.message,
-        variant: "destructive",
-      })
-      throw error
-    }
+    toast({
+      title: "Sign up disabled",
+      description: "Please contact administrator for access.",
+      variant: "destructive"
+    })
   }
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-      
-      if (error) throw error
-      
-      toast({
-        title: "Welcome back!",
-        description: "You have been successfully signed in.",
-      })
+      if (password === "Zetatest@123") {
+        const mockUser: User = {
+          id: 'static-user-id',
+          email: email,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+        
+        const mockSession: Session = {
+          user: mockUser,
+          access_token: 'static-mock-token'
+        }
+
+        setUser(mockUser)
+        setSession(mockSession)
+        localStorage.setItem('auth_session', JSON.stringify(mockSession))
+        
+        toast({
+          title: "Welcome back!",
+          description: "You have been successfully signed in.",
+        })
+      } else {
+        throw new Error("Invalid password")
+      }
     } catch (error: any) {
       toast({
         title: "Error signing in",
@@ -100,65 +106,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   const signOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut()
-      if (error) throw error
-      
-      toast({
-        title: "Signed out",
-        description: "You have been successfully signed out.",
-      })
-    } catch (error: any) {
-      toast({
-        title: "Error signing out",
-        description: error.message,
-        variant: "destructive",
-      })
-    }
+    setUser(null)
+    setSession(null)
+    localStorage.removeItem('auth_session')
+    
+    toast({
+      title: "Signed out",
+      description: "You have been successfully signed out.",
+    })
   }
 
   const resetPassword = async (email: string) => {
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      })
-      
-      if (error) throw error
-      
-      toast({
-        title: "Password reset email sent",
-        description: "Please check your email for password reset instructions.",
-      })
-    } catch (error: any) {
-      toast({
-        title: "Error sending reset email",
-        description: error.message,
-        variant: "destructive",
-      })
-      throw error
-    }
+    toast({
+      title: "Feature unavailable",
+      description: "Please contact administrator to reset password.",
+      variant: "destructive"
+    })
   }
 
   const updatePassword = async (newPassword: string) => {
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
-      })
-      
-      if (error) throw error
-      
-      toast({
-        title: "Password updated",
-        description: "Your password has been successfully updated.",
-      })
-    } catch (error: any) {
-      toast({
-        title: "Error updating password",
-        description: error.message,
-        variant: "destructive",
-      })
-      throw error
-    }
+    toast({
+      title: "Feature unavailable",
+      description: "Password updates are disabled in static mode.",
+      variant: "destructive"
+    })
   }
 
   const value = {
@@ -177,4 +148,4 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       {children}
     </AuthContext.Provider>
   )
-} 
+}
