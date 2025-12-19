@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     proxy: {
       '/api/json-inputs': {
-        target: 'https://lsv-vm270.rfiserve.net:5000',
+        target: 'https://lsv-vm289.rfiserve.net:5000',
         changeOrigin: true,
         secure: false,  // Ignore self-signed certificate errors
         rewrite: (path) => path.replace(/^\/api/, ''),
@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => ({
         },
       },
       '/api': {
-        target: 'https://lsv-vm270.rfiserve.net:4000',
+        target: 'https://lsv-vm289.rfiserve.net:4000',
         changeOrigin: true,
         secure: false,  // Ignore self-signed certificate errors
         configure: (proxy, _options) => {

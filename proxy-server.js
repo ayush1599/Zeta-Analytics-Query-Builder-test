@@ -20,15 +20,15 @@ const httpsAgent = new https.Agent({
 
 // Proxy configuration
 const proxyOptions = {
-  target: 'https://lsv-vm270.rfiserve.net:4000',
+  target: 'https://lsv-vm289.rfiserve.net:4000',
   changeOrigin: true,
   secure: false,
   agent: httpsAgent,
   onError: (err, req, res) => {
     console.error('Proxy error:', err.message);
-    res.status(500).json({ 
-      error: 'Proxy server error', 
-      message: err.message 
+    res.status(500).json({
+      error: 'Proxy server error',
+      message: err.message
     });
   },
   onProxyReq: (proxyReq, req, res) => {
@@ -44,10 +44,10 @@ const proxy = createProxyMiddleware(proxyOptions);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'healthy', 
+  res.json({
+    status: 'healthy',
     timestamp: new Date().toISOString(),
-    target: 'https://lsv-vm270.rfiserve.net:4000'
+    target: 'https://lsv-vm289.rfiserve.net:4000'
   });
 });
 
@@ -56,6 +56,6 @@ app.use('/', proxy);
 
 app.listen(PORT, () => {
   console.log(`Proxy server running on port ${PORT}`);
-  console.log(`Proxying requests to: https://lsv-vm270.rfiserve.net:4000`);
+  console.log(`Proxying requests to: https://lsv-vm289.rfiserve.net:4000`);
   console.log(`Health check available at: http://localhost:${PORT}/health`);
 }); 

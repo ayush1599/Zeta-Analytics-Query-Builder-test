@@ -422,8 +422,8 @@ const ZigsDataTransfer = () => {
 
       // Auto-generate destination table name for Hive
       const autoDestTableName = destination === "Hive" ? `${sourceTableName}_matches` :
-                               destination === "S3" ? destS3Key :
-                               snowflakeDestTable;
+        destination === "S3" ? destS3Key :
+          snowflakeDestTable;
 
       const input_dict: any = {
         params: {
@@ -597,7 +597,7 @@ const ZigsDataTransfer = () => {
       console.log('Input Dictionary:', pythonFormat);
 
       // Prepare API request
-      const apiBaseUrl = import.meta.env.VITE_WORKFLOW_API_BASE_URL || 'https://lsv-vm270.rfiserve.net:5000';
+      const apiBaseUrl = import.meta.env.VITE_WORKFLOW_API_BASE_URL || 'https://lsv-vm289.rfiserve.net:5000';
       const apiUrl = import.meta.env.DEV
         ? '/api/json-inputs'  // Development: use Vite proxy
         : `${apiBaseUrl}/json-inputs`;
@@ -667,12 +667,12 @@ const ZigsDataTransfer = () => {
           </div>
         </div>
       </header>
-      
+
       <main className="flex-1 flex items-center justify-center px-4 min-h-[calc(100vh-120px)]">
         <div className="w-full max-w-7xl">
           {/* Workflow Layout */}
           <div className="flex items-center justify-center mb-16">
-            
+
             {/* Source Node */}
             <div className={cn("relative z-10 w-80 transition-opacity duration-300", !operation && "opacity-40")}>
               <Card className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
@@ -685,7 +685,7 @@ const ZigsDataTransfer = () => {
                       <h3 className="text-lg font-bold text-gray-800">Source</h3>
                     </div>
                   </div>
-                  
+
                   <div className="mb-4">
                     <Select
                       value={source}
@@ -1046,13 +1046,13 @@ const ZigsDataTransfer = () => {
                 </CardContent>
               </Card>
             </div>
-            
+
             {/* First Connection Line */}
             <div className="relative flex items-center justify-center mx-4">
               <div className={cn(
                 "w-32 h-2 transition-all duration-700 rounded-full relative overflow-hidden",
-                source && operation ? 
-                  "bg-gradient-to-r from-blue-400 to-purple-400" : 
+                source && operation ?
+                  "bg-gradient-to-r from-blue-400 to-purple-400" :
                   "bg-gradient-to-r from-gray-300 to-gray-400"
               )}>
                 {source && operation && (
@@ -1060,7 +1060,7 @@ const ZigsDataTransfer = () => {
                 )}
               </div>
             </div>
-            
+
             {/* Operation Node */}
             <div className="relative z-10 w-80">
               <Card className={cn(
@@ -1084,7 +1084,7 @@ const ZigsDataTransfer = () => {
                       <h3 className="text-lg font-bold text-gray-800">Operation</h3>
                     </div>
                   </div>
-                  
+
                   <div className="mb-4">
                     <Select value={operation} onValueChange={(value: Operation) => setOperation(value)}>
                       <SelectTrigger className="w-full bg-white border-gray-200 text-gray-800 h-12 rounded-lg hover:border-gray-300">
@@ -1106,7 +1106,7 @@ const ZigsDataTransfer = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div className={cn(
                     "w-3 h-3 rounded-full mx-auto transition-all duration-700",
                     operation ? "bg-purple-400 shadow-lg shadow-purple-400/50 animate-pulse" : "bg-purple-300"
@@ -1114,13 +1114,13 @@ const ZigsDataTransfer = () => {
                 </CardContent>
               </Card>
             </div>
-            
+
             {/* Second Connection Line */}
             <div className="relative flex items-center justify-center mx-4">
               <div className={cn(
                 "w-32 h-2 transition-all duration-700 rounded-full relative overflow-hidden",
-                operation && destination ? 
-                  "bg-gradient-to-r from-purple-400 to-green-400" : 
+                operation && destination ?
+                  "bg-gradient-to-r from-purple-400 to-green-400" :
                   "bg-gradient-to-r from-gray-300 to-gray-400"
               )}>
                 {operation && destination && (
@@ -1128,7 +1128,7 @@ const ZigsDataTransfer = () => {
                 )}
               </div>
             </div>
-            
+
             {/* Destination Node */}
             <div className={cn("relative z-10 w-80 transition-opacity duration-300", !operation && "opacity-40")}>
               <Card className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
@@ -1141,7 +1141,7 @@ const ZigsDataTransfer = () => {
                       <h3 className="text-lg font-bold text-gray-800">Destination</h3>
                     </div>
                   </div>
-                  
+
                   <div className="mb-4">
                     <Select
                       value={destination}
@@ -1506,8 +1506,8 @@ const ZigsDataTransfer = () => {
                     ? `Execute Data Transfer: ${source} to ${destination}`
                     : `Complete all fields for Data Transfer`
                   : isWorkflowValid()
-                  ? `Execute ZIGS: ${source} to ${destination}`
-                  : `Complete all fields to execute ZIGS`
+                    ? `Execute ZIGS: ${source} to ${destination}`
+                    : `Complete all fields to execute ZIGS`
               ) : 'Configure workflow to get started'}
               <ArrowRight className="w-5 h-5" />
             </Button>
