@@ -1,0 +1,24 @@
+{
+  "name": "zeta-analytics-proxy",
+  "version": "1.0.0",
+  "description": "Proxy server for Zeta Analytics Query Builder to handle SSL certificate issues",
+  "main": "proxy-server.js",
+  "scripts": {
+    "start": "node proxy-server.js",
+    "dev": "nodemon proxy-server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["proxy", "ssl", "analytics", "express"],
+  "author": "Zeta Analytics Team",
+  "license": "MIT"
+} 

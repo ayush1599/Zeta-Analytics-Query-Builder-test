@@ -1,0 +1,299 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 259 92% 66%; /* Medium Purple */
+    --primary-foreground: 0 0% 100%; /* White */
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 259 92% 66%; /* Medium Purple */
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .btn:hover {
+    background-color: hsl(var(--primary) / 0.1);
+  }
+  
+  /* Hide Select component selection indicators */
+  [data-radix-select-item-indicator] {
+    display: none !important;
+  }
+  
+  /* Alternative selectors for selection indicators */
+  span[data-radix-select-item-indicator],
+  div[data-radix-select-item-indicator] {
+    display: none !important;
+  }
+  
+  /* More specific selectors for Radix UI Select */
+  [data-radix-select-item][data-state="checked"] [data-radix-select-item-indicator],
+  [data-radix-select-item][data-state="checked"] span[data-radix-select-item-indicator],
+  [data-radix-select-item][data-state="checked"] div[data-radix-select-item-indicator] {
+    display: none !important;
+  }
+  
+  /* Target any element with the indicator attribute */
+  *[data-radix-select-item-indicator] {
+    display: none !important;
+  }
+  
+  /* Hide checkmarks in Select components */
+  .SelectItem[data-state="checked"] [data-radix-select-item-indicator],
+  .SelectItem[data-state="checked"] span[data-radix-select-item-indicator] {
+    display: none !important;
+  }
+  
+  /* Target shadcn/ui specific classes */
+  .select-item[data-state="checked"] [data-radix-select-item-indicator],
+  .select-item[data-state="checked"] span[data-radix-select-item-indicator],
+  .select-item[data-state="checked"] div[data-radix-select-item-indicator] {
+    display: none !important;
+  }
+  
+  /* Universal selector for any checkmark/indicator */
+  [data-radix-select-item-indicator],
+  [data-radix-select-item-indicator] *,
+  *[data-radix-select-item-indicator] * {
+    display: none !important;
+  }
+  
+  /* Force hide any element with indicator attributes */
+  [data-radix-select-item-indicator] {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+  }
+  
+  /* Target the specific Select component on homepage */
+  .homepage-select [data-radix-select-item-indicator] {
+    display: none !important;
+  }
+  
+  /* Target any SVG or icon that might be the tick */
+  .homepage-select svg[data-radix-select-item-indicator],
+  .homepage-select [data-radix-select-item-indicator] svg,
+  .homepage-select [data-radix-select-item-indicator] path,
+  .homepage-select [data-radix-select-item-indicator] * {
+    display: none !important;
+  }
+  
+  /* Hide any element that contains "check" or "tick" in its content */
+  .homepage-select *:contains("✓"),
+  .homepage-select *:contains("✔"),
+  .homepage-select *:contains("check"),
+  .homepage-select *:contains("tick") {
+    display: none !important;
+  }
+  
+  /* Nuclear option - hide all potential indicators */
+  .homepage-select [data-radix-select-item-indicator],
+  .homepage-select [data-radix-select-item-indicator] *,
+  .homepage-select [data-radix-select-item-indicator]::before,
+  .homepage-select [data-radix-select-item-indicator]::after {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    clip: rect(0, 0, 0, 0) !important;
+  }
+  
+  /* Target the specific Check icon that's hardcoded in SelectItem */
+  .homepage-select .h-4.w-4,
+  .homepage-select svg.h-4.w-4,
+  .homepage-select [data-radix-select-item-indicator] .h-4.w-4,
+  .homepage-select [data-radix-select-item-indicator] svg {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  
+  /* Hide the entire indicator span container */
+  .homepage-select span[class*="absolute left-2 flex h-3.5 w-3.5"] {
+    display: none !important;
+  }
+  
+  /* Target the Check icon specifically */
+  .homepage-select .lucide-check {
+    display: none !important;
+  }
+  
+  /* Animated gradient for Analytics Studio text */
+  @keyframes gradient-x {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+  
+  .animate-gradient-x {
+    animation: gradient-x 3s ease-in-out infinite;
+  }
+  
+  /* Flowing gradient animation for connection lines */
+  @keyframes flow {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  
+  .animate-flow {
+    animation: flow 2s ease-in-out infinite;
+  }
+  
+  /* Smooth animated border flow for selected boxes */
+  @keyframes border-rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .animate-border-flow {
+    position: relative;
+  }
+  
+  .animate-border-flow::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    padding: 2px;
+    background: conic-gradient(from 0deg, transparent, currentColor, transparent, currentColor, transparent);
+    border-radius: inherit;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: xor;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    animation: border-rotate 3s linear infinite;
+    pointer-events: none;
+  }
+  
+  /* Light grey dotted grid background */
+  .dotted-grid {
+    background-image: radial-gradient(circle, #d1d5db 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  
+  /* Gradient animation for text */
+  @keyframes gradient-x {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+  
+  .animate-gradient-x {
+    animation: gradient-x 3s ease infinite;
+  }
+  
+  }
